@@ -11,16 +11,23 @@ public class Player_Move : MonoBehaviour
     private Rigidbody2D body;
     private SpriteRenderer spriteRenderer; // 스프라이트 렌더러 추가
     private Animator anim;
+    private PlayerDash dash;
+    public float InputX => inputValue;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer 가져오기
         anim = GetComponent<Animator>();
+        dash = GetComponent<PlayerDash>();
     }
 
     private void FixedUpdate()
     {
+
+        if (dash != null && dash.IsDashing)
+            return;
+
         body.linearVelocityX = inputValue * speed;
 
         // 캐릭터 방향 전환
