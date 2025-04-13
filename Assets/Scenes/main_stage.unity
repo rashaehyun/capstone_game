@@ -6137,7 +6137,7 @@ Transform:
   m_GameObject: {fileID: 1396208079}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.03, y: -1.72, z: 0}
+  m_LocalPosition: {x: -3.29, y: -26.21, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children: []
@@ -6925,8 +6925,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 103c08590d1177949aa5b87baf8d0264, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 1396208079}
-  cameraSpeed: 5
+  target: {fileID: 1396208083}
+  offset: {x: 0, y: 6, z: -10}
+  smoothTime: 0.3
+  pixelsPerUnit: 32
+  refWidth: 1920
+  refHeight: 1080
   minPosition: {x: -27, y: -21}
   maxPosition: {x: 21, y: 0}
 --- !u!1 &1877492753
