@@ -14,6 +14,7 @@ public class PlayerDash : MonoBehaviour
     private Camera mainCamera;
     private Player_Move move;
     private SpriteRenderer spriteRenderer;
+    private Animator anim;
 
     // ✅ 외부에서 대시 상태 확인 가능 (ex. 이동/점프 차단용)
     public bool IsDashing => isDashing;
@@ -24,6 +25,7 @@ public class PlayerDash : MonoBehaviour
         mainCamera = Camera.main;
         move = GetComponent<Player_Move>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        anim = GetComponent<Animator>();
     }
 
     public void OnDash()
@@ -56,6 +58,8 @@ public class PlayerDash : MonoBehaviour
         {
             spriteRenderer.flipX = direction.x < 0f;
         }
+
+        anim.SetTrigger("Dash");
 
         // ✅ 수직 튐 방지
         direction = new Vector2(direction.x, direction.y * 0.3f).normalized;
