@@ -6367,6 +6367,8 @@ MonoBehaviour:
   dashSpeed: 35
   dashDuration: 0.2
   dashCooldown: 0.2
+  trackingSpeed: 15
+  maxTrackingDistance: 30
 --- !u!70 &1396208091
 CapsuleCollider2D:
   m_ObjectHideFlags: 0
