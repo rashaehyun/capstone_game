@@ -21,7 +21,7 @@ public class PlayerJump : MonoBehaviour
 
     private void LateUpdate()
     {
-        anim.SetBool("Ground", isGround);
+        //anim.SetBool("Ground", isGround);
         anim.SetBool("isJump", isJump);
     }
 

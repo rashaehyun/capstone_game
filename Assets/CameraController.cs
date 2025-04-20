@@ -21,7 +21,7 @@ public class CameraController : MonoBehaviour
     void Start()
     {
         // Pixel Perfect Camera 설정
-        PixelPerfectCamera ppc = GetComponent<PixelPerfectCamera>();
+        /*PixelPerfectCamera ppc = GetComponent<PixelPerfectCamera>();
         if (ppc != null)
         {
             ppc.assetsPPU = pixelsPerUnit;
@@ -33,7 +33,7 @@ public class CameraController : MonoBehaviour
         else
         {
             Debug.LogWarning("Pixel Perfect Camera 컴포넌트가 없습니다.");
-        }
+        }*/
     }
 
     void LateUpdate()
