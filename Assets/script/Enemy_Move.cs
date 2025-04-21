@@ -28,8 +28,8 @@ public class Enemy_Move : MonoBehaviour
 #pragma warning restore CS0618
 
         //플랫폼 체크
-        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.3f, rigid.position.y);
-        //Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
+        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.2f, rigid.position.y);
+        Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
         //낭떨어지라면 방향 전환
@@ -41,15 +41,27 @@ public class Enemy_Move : MonoBehaviour
     void Think()
     {
         //다음 활동
-        nextMove = Random.Range(-1, 2);
+        nextMove = 2 * Random.Range(-1, 2);
 
         //몬스터 애니메이션
         anim.SetInteger("RunSpeed", nextMove);
         
         //몬스터 이동 방향
         if (nextMove != 0) {
-            spriteRenderer.flipX = nextMove == 1;
+            spriteRenderer.flipX = nextMove >= 1;
         }
+        /*
+        if (nextMove != 0)
+        {
+            if (nextMove >= 1)
+            {
+                spriteRenderer.flipX = true;
+            }
+            else if (nextMove <= -1)
+            {
+                spriteRenderer.flipX = false;
+            }
+        }*/
 
         //재귀
         float nextThinkTime = Random.Range(2f, 5f);
@@ -59,7 +71,7 @@ public class Enemy_Move : MonoBehaviour
     void Turn()
     {
         nextMove *= -1;
-        spriteRenderer.flipX = nextMove == 1;
+        spriteRenderer.flipX = nextMove >= 1;
 
         CancelInvoke();
         Invoke("Think", 2);
