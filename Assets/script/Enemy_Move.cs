@@ -33,7 +33,8 @@ public class Enemy_Move : MonoBehaviour
         RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
         //낭떨어지라면 방향 전환
-        if (rayHit.collider == null) {
+        if (rayHit.collider == null)
+        {
             Turn();
         }
     }
@@ -41,27 +42,16 @@ public class Enemy_Move : MonoBehaviour
     void Think()
     {
         //다음 활동
-        nextMove = 2 * Random.Range(-1, 2);
+        nextMove = Random.Range(-1, 2);
 
         //몬스터 애니메이션
         anim.SetInteger("RunSpeed", nextMove);
-        
+
         //몬스터 이동 방향
-        if (nextMove != 0) {
-            spriteRenderer.flipX = nextMove >= 1;
-        }
-        /*
         if (nextMove != 0)
         {
-            if (nextMove >= 1)
-            {
-                spriteRenderer.flipX = true;
-            }
-            else if (nextMove <= -1)
-            {
-                spriteRenderer.flipX = false;
-            }
-        }*/
+            spriteRenderer.flipX = nextMove >= 1;
+        }
 
         //재귀
         float nextThinkTime = Random.Range(2f, 5f);
