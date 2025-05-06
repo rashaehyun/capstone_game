@@ -4,6 +4,7 @@ public class PlayerJump : MonoBehaviour
 {
     [SerializeField] float jumpPower = 5f;
     [SerializeField] int maxJumpCount = 2;
+    [SerializeField] private LayerMask groundLayer;
 
     private bool isGround = false;
     private int jumpCount = 0;
@@ -27,7 +28,7 @@ public class PlayerJump : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground"))
+        if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
             isGround = true;
             jumpCount = 0;
@@ -37,13 +38,13 @@ public class PlayerJump : MonoBehaviour
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.CompareTag("Ground"))
+        if (((1 << collision.gameObject.layer) & groundLayer) != 0)
         {
             isGround = false;
         }
     }
 
-    
+
     public void OnJump()
     {
         if (jumpCount < maxJumpCount)

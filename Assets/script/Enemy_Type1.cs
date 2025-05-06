@@ -26,6 +26,10 @@ public class Enemy_Type1 : MonoBehaviour
     float chargeTime = 0.5f; // 돌진 지속 시간
     float chargeTimer = 0f;
 
+    //몬스터 체력
+    public int maxHp = 5;
+    private int currentHp;
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -33,6 +37,12 @@ public class Enemy_Type1 : MonoBehaviour
         spriteRenderer = GetComponent<SpriteRenderer>();
 
         Invoke("Think", 2);
+        
+    }
+
+    private void Start()
+    {
+        currentHp = maxHp;
     }
 
     void Update()
@@ -192,6 +202,25 @@ public class Enemy_Type1 : MonoBehaviour
             transform.position = Vector3.Lerp(originPos + Vector3.up * jumpHeight, originPos, t);
             yield return null;
         }
+    }
+
+    //피격 판정 및 체력
+    public void TakeDamage(int dmg)
+    {
+        currentHp -= dmg;
+        Debug.Log("Enemy hit! HP: " + currentHp);
+
+        if (currentHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    //몬스터 죽음
+    void Die()
+    {
+        // 애니메이션, 파티클, 점수 증가 등 추가 가능
+        Destroy(gameObject);
     }
 
 }
