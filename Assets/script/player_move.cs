@@ -49,4 +49,34 @@ public class Player_Move : MonoBehaviour
         inputValue = value.Get<Vector2>().x;
     }
 
+    //몬스터와 충돌 여부 판단
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == "Enemy")
+        {
+            OnDamaged(collision.transform.position);
+        }
+    }
+    
+    //몬스터 피격 시 무적
+    void OnDamaged(Vector2 targetPos)
+    {
+        gameObject.layer = 11;
+
+        spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        
+        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
+        body.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse); //곱한 값으로 튕겨나는 거리 조절
+
+        //무적시간 1.5초 이후 일반 상태로 변경
+        Invoke("OffDamaged", 1.5f);
+    }
+
+    //일반 상태로 변경
+    void OffDamaged()
+    {
+        gameObject.layer = 10;
+
+        spriteRenderer.color = new Color(1, 1, 1, 1);
+    }
 }
