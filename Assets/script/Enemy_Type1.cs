@@ -30,6 +30,14 @@ public class Enemy_Type1 : MonoBehaviour
     public int maxHp = 5;
     private int currentHp;
 
+    private bool hasSpottedPlayer = false;
+    private float spottedTimer = 0f;
+    [SerializeField] private float delayBeforeCharge = 2f;
+    [SerializeField] private float patrolSpeed = 1.5f; // 순찰 속도
+
+    private float lastTurnTime = 0f;
+    [SerializeField] private float turnCooldown = 1f;  // 회전 쿨타임
+
     void Awake()
     {
         rigid = GetComponent<Rigidbody2D>();
@@ -64,42 +72,45 @@ public class Enemy_Type1 : MonoBehaviour
             }
             return;
         }
-
         if (distance <= fieldOfVision)
         {
             FaceTarget();
 
-            if (distance <= atkRange)
+            if (!hasSpottedPlayer)
             {
-                if (distance <= atkRange && attackDelay <= 0)
-                {
-                    AttackTarget();
-                }
-
-                lostTargetTime = 0f;
+                hasSpottedPlayer = true;
+                spottedTimer = 0f;  // 처음 인식 시 타이머 초기화
             }
-            else
+
+            spottedTimer += Time.deltaTime;
+
+            if (!isCharging && spottedTimer >= delayBeforeCharge)
             {
-                lostTargetTime += Time.deltaTime;
-
-                if (lostTargetTime >= chargeThreshold)
-                {
-                    isCharging = true;
-                    chargeTimer = chargeTime;
-                    lostTargetTime = 0f;
-                }
-                else
-                {
-                    MoveToTarget();
-                }
+                isCharging = true;
+                chargeTimer = chargeTime;
+                spottedTimer = 0f;
             }
+
+            if (!isCharging)
+            {
+                MoveToTarget(); // ✅ 돌진 중이 아닐 때만 이동
+            }
+
+            // 공격
+            if (distance <= atkRange && attackDelay <= 0)
+            {
+                AttackTarget();
+            }
+
+            return; // 여기서는 돌진 중이거나 플레이어 추적 상태일 때만 빠짐
         }
         else
         {
-            lostTargetTime = 0f;
-            //anim.SetBool("moving", false);
+            // 범위 밖이면 상태 초기화
+            hasSpottedPlayer = false;
+            spottedTimer = 0f;
+            isCharging = false;
 
-            // ✅ 순찰 상태 복귀를 위해 Think 재시작
             if (!IsInvoking("Think"))
             {
                 Invoke("Think", 2f);
@@ -115,14 +126,18 @@ public class Enemy_Type1 : MonoBehaviour
         // 순찰 중일 때만 적용
         if (target == null || Vector2.Distance(transform.position, target.position) > fieldOfVision)
         {
-            rigid.linearVelocity = new Vector2(nextMove, rigid.linearVelocity.y);
+            rigid.linearVelocity = new Vector2(nextMove * patrolSpeed, rigid.linearVelocity.y);
+
+            // ✅ 순찰 방향에 따라 스프라이트 방향 갱신
+            if (nextMove != 0)
+                spriteRenderer.flipX = nextMove == 1;
 
             // 플랫폼 체크
             Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.4f, rigid.position.y);
             Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
             RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));
 
-            if (rayHit.collider == null)
+            if (rayHit.collider == null && Time.time - lastTurnTime >= turnCooldown)
             {
                 Turn();
             }
@@ -139,12 +154,19 @@ public class Enemy_Type1 : MonoBehaviour
 
         float nextThinkTime = Random.Range(2f, 5f);
         Invoke("Think", nextThinkTime);
+
+        if (!IsInvoking("Think"))
+        {
+            Invoke("Think", Random.Range(2f, 5f));
+        }
     }
 
     void Turn()
     {
         nextMove *= -1;
         spriteRenderer.flipX = nextMove == 1;
+
+        lastTurnTime = Time.time;
 
         CancelInvoke();
         Invoke("Think", 2);
