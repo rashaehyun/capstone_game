@@ -8,8 +8,16 @@ public class Player_Move : MonoBehaviour
     [SerializeField] private float speed;
     private float inputValue;
 
+    [Header("ë„‰ë°± ì„¤ì •")]
+    [SerializeField] private float knockbackPowerX = 7f;  // ì¢Œìš° í˜
+    [SerializeField] private float knockbackPowerY = 4f;  // ìœ„ìª½ í˜
+
+    [Header("ì¤‘ë ¥ ë° ë‚™í•˜ ì„¤ì •")]
+    [SerializeField] private float fallGravityMultiplier = 2.5f;  // ë‚™í•˜ ì‹œ ì¤‘ë ¥ ë°°ìˆ˜
+    [SerializeField] private float maxFallSpeed = -30f;           // ë‚™í•˜ ìµœëŒ€ ì†ë„
+
     private Rigidbody2D body;
-    private SpriteRenderer spriteRenderer; // ½ºÇÁ¶óÀÌÆ® ·»´õ·¯ Ãß°¡
+    private SpriteRenderer spriteRenderer; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ® ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß°ï¿½
     private Animator anim;
     private PlayerDash dash;
     public float InputX => inputValue;
@@ -17,7 +25,7 @@ public class Player_Move : MonoBehaviour
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer °¡Á®¿À±â
+        spriteRenderer = GetComponent<SpriteRenderer>(); // SpriteRenderer ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
         anim = GetComponent<Animator>();
         dash = GetComponent<PlayerDash>();
     }
@@ -30,14 +38,26 @@ public class Player_Move : MonoBehaviour
 
         body.linearVelocityX = inputValue * speed;
 
-        // Ä³¸¯ÅÍ ¹æÇâ ÀüÈ¯
+        // ë‚™í•˜ ì¤‘ì¼ ë•Œ ì¤‘ë ¥ ê°•í™”
+        if (body.linearVelocity.y < 0)
+        {
+            body.linearVelocity += Vector2.up * Physics2D.gravity.y * (fallGravityMultiplier - 1f) * Time.fixedDeltaTime;
+        }
+
+        // ë‚™í•˜ ì†ë„ ì œí•œ
+        if (body.linearVelocity.y < maxFallSpeed)
+        {
+            body.linearVelocity = new Vector2(body.linearVelocity.x, maxFallSpeed);
+        }
+
+        // Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½È¯
         if (inputValue > 0)
         { 
-            spriteRenderer.flipX = false; // ¿À¸¥ÂÊ ÀÌµ¿ ½Ã ¿ø·¡ ¹æÇâ
+            spriteRenderer.flipX = false; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
         else if (inputValue < 0)
         { 
-            spriteRenderer.flipX = true;  // ¿ŞÂÊ ÀÌµ¿ ½Ã ÁÂ¿ì ¹İÀü
+            spriteRenderer.flipX = true;  // ï¿½ï¿½ï¿½ï¿½ ï¿½Ìµï¿½ ï¿½ï¿½ ï¿½Â¿ï¿½ ï¿½ï¿½ï¿½ï¿½
         }
 
         bool isRunning = Mathf.Abs(inputValue) > 0.01f;
@@ -49,30 +69,42 @@ public class Player_Move : MonoBehaviour
         inputValue = value.Get<Vector2>().x;
     }
 
-    //¸ó½ºÅÍ¿Í Ãæµ¹ ¿©ºÎ ÆÇ´Ü
+    //ï¿½ï¿½ï¿½Í¿ï¿½ ï¿½æµ¹ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç´ï¿½
     void OnCollisionEnter2D(Collision2D collision)
     {
         if(collision.gameObject.tag == "Enemy")
         {
-            OnDamaged(collision.transform.position);
+            OnDamaged();
         }
     }
-    
-    //¸ó½ºÅÍ ÇÇ°İ ½Ã ¹«Àû
-    void OnDamaged(Vector2 targetPos)
+
+    //ï¿½ï¿½ï¿½ï¿½ ï¿½Ç°ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+
+
+    // ë¬´ì  + ë„‰ë°± ì²˜ë¦¬
+    void OnDamaged()
     {
         gameObject.layer = 11;
-
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
-        
-        int dirc = transform.position.x - targetPos.x > 0 ? 1 : -1;
-        body.AddForce(new Vector2(dirc, 1) * 7, ForceMode2D.Impulse); //°öÇÑ °ªÀ¸·Î Æ¨°Ü³ª´Â °Å¸® Á¶Àı
 
-        //¹«Àû½Ã°£ 1.5ÃÊ ÀÌÈÄ ÀÏ¹İ »óÅÂ·Î º¯°æ
+        // ì§„í–‰ ë°©í–¥ ë°˜ëŒ€ë¡œ ê°•ì œ ë„‰ë°±
+        float xDirection;
+        if (inputValue > 0.1f)
+            xDirection = -1f;
+        else if (inputValue < -0.1f)
+            xDirection = 1f;
+        else
+            xDirection = spriteRenderer.flipX ? 1f : -1f; // ì›€ì§ì´ì§€ ì•Šì„ ê²½ìš°, ìºë¦­í„° ë°©í–¥ ê¸°ì¤€ ë„‰ë°±
+
+        Vector2 knockback = new Vector2(xDirection * knockbackPowerX, knockbackPowerY + 1f); // Yì¶•ì—ë„ í˜ì„ ë” ì¤Œ
+
+        body.linearVelocity = Vector2.zero; // ë°˜ë“œì‹œ ì†ë„ ì œê±°
+        body.AddForce(knockback, ForceMode2D.Impulse);
+
         Invoke("OffDamaged", 1.5f);
     }
 
-    //ÀÏ¹İ »óÅÂ·Î º¯°æ
+    //ï¿½Ï¹ï¿½ ï¿½ï¿½ï¿½Â·ï¿½ ï¿½ï¿½ï¿½ï¿½
     void OffDamaged()
     {
         gameObject.layer = 10;

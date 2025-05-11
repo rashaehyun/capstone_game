@@ -98,6 +98,14 @@ public class Enemy_Type1 : MonoBehaviour
         {
             lostTargetTime = 0f;
             //anim.SetBool("moving", false);
+
+            // ✅ 순찰 상태 복귀를 위해 Think 재시작
+            if (!IsInvoking("Think"))
+            {
+                Invoke("Think", 2f);
+            }
+
+            anim.SetBool("moving", false);
         }
     }
 
