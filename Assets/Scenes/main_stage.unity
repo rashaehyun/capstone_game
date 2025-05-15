@@ -6991,7 +6991,7 @@ Transform:
   m_GameObject: {fileID: 1396208079}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -3.5, y: -6.5, z: 0}
+  m_LocalPosition: {x: -1.5, y: -6.5, z: 0}
   m_LocalScale: {x: 2, y: 2, z: 2}
   m_ConstrainProportionsScale: 1
   m_Children:
@@ -7041,8 +7041,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 10
-  knockbackPowerX: 15
-  knockbackPowerY: 15
+  knockbackPowerX: 7
+  knockbackPowerY: 7
   fallGravityMultiplier: 3
   maxFallSpeed: -30
 --- !u!95 &1396208087
@@ -7148,7 +7148,7 @@ CapsuleCollider2D:
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 6200000, guid: 1998347d3c00c314e8e3af01d9dd7357, type: 2}
   m_IncludeLayers:
     serializedVersion: 2
     m_Bits: 0
@@ -7888,6 +7888,9 @@ MonoBehaviour:
   atkSpeed: 1.5
   nextMove: 0
   maxHp: 5
+  delayBeforeCharge: 2
+  patrolSpeed: 1.5
+  turnCooldown: 1
 --- !u!1 &1770867290
 GameObject:
   m_ObjectHideFlags: 0

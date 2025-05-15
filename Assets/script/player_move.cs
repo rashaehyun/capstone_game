@@ -22,6 +22,8 @@ public class Player_Move : MonoBehaviour
     private PlayerDash dash;
     public float InputX => inputValue;
 
+    private bool isKnockback = false;
+
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
@@ -33,9 +35,13 @@ public class Player_Move : MonoBehaviour
     private void FixedUpdate()
     {
 
-        if (dash != null && dash.IsDashing)
+        if (dash != null && dash.IsDashing || isKnockback)
             return;
 
+        if (isKnockback)
+            return; // 여전히 넉백이면 아무것도 하지 않음
+
+        // 이 아래는 완전히 복귀된 상태에서만 실행
         body.linearVelocityX = inputValue * speed;
 
         // 낙하 중일 때 중력 강화
@@ -74,7 +80,8 @@ public class Player_Move : MonoBehaviour
     {
         if(collision.gameObject.tag == "Enemy")
         {
-            OnDamaged();
+            Vector2 hitPos = collision.GetContact(0).point; // 충돌 지점 추출
+            OnDamaged(hitPos); // 인자전달
         }
     }
 
@@ -82,23 +89,16 @@ public class Player_Move : MonoBehaviour
 
 
     // 무적 + 넉백 처리
-    void OnDamaged()
+    void OnDamaged(Vector2 hitPos)
     {
         gameObject.layer = 11;
         spriteRenderer.color = new Color(1, 1, 1, 0.4f);
+        isKnockback = true; // ✅ 넉백 상태 진입
 
-        // 진행 방향 반대로 강제 넉백
-        float xDirection;
-        if (inputValue > 0.1f)
-            xDirection = -1f;
-        else if (inputValue < -0.1f)
-            xDirection = 1f;
-        else
-            xDirection = spriteRenderer.flipX ? 1f : -1f; // 움직이지 않을 경우, 캐릭터 방향 기준 넉백
+        float xDirection = (transform.position.x - hitPos.x) > 0 ? 1f : -1f;
+        Vector2 knockback = new Vector2(xDirection * knockbackPowerX, knockbackPowerY);
 
-        Vector2 knockback = new Vector2(xDirection * knockbackPowerX, knockbackPowerY + 1f); // Y축에도 힘을 더 줌
-
-        body.linearVelocity = Vector2.zero; // 반드시 속도 제거
+        body.linearVelocity = Vector2.zero;
         body.AddForce(knockback, ForceMode2D.Impulse);
 
         Invoke("OffDamaged", 1.5f);
@@ -110,5 +110,9 @@ public class Player_Move : MonoBehaviour
         gameObject.layer = 10;
 
         spriteRenderer.color = new Color(1, 1, 1, 1);
+
+        isKnockback = false;
+
+        body.linearVelocity = Vector2.zero;
     }
 }
