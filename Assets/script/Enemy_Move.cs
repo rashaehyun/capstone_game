@@ -1,69 +1,97 @@
-using System.Collections;
-using System.Collections.Generic;
+using System.Collections; //점프를 위해 임시로 추가
 using UnityEngine;
 
 public class Enemy_Move : MonoBehaviour
 {
-    Rigidbody2D rigid;
-    Animator anim;
-    SpriteRenderer spriteRenderer;
+    public Transform target;
+    float attackDelay;
 
-    public int nextMove;
-
-    void Awake()
+    Enemy enemy;
+    Animator enemyAnimator;
+    void Start()
     {
-        rigid = GetComponent<Rigidbody2D>();
-        anim = GetComponent<Animator>();
-        spriteRenderer = GetComponent<SpriteRenderer>();
-
-        Invoke("Think", 2);
+        enemy = GetComponent<Enemy>();
+        enemyAnimator = enemy.enemyAnimator;
     }
 
-    void FixedUpdate()
+    void Update()
     {
-        //이동
-        //유니티 버전 오류 무시
-#pragma warning disable CS0618
-        rigid.velocity = new Vector2(nextMove, rigid.velocity.y);
-#pragma warning restore CS0618
+        attackDelay -= Time.deltaTime;
+        if (attackDelay < 0) attackDelay = 0;
 
-        //플랫폼 체크
-        Vector2 frontVec = new Vector2(rigid.position.x + nextMove * 0.2f, rigid.position.y);
-        Debug.DrawRay(frontVec, Vector3.down, new Color(0, 1, 0));
-        RaycastHit2D rayHit = Physics2D.Raycast(frontVec, Vector3.down, 1, LayerMask.GetMask("Platform"));
+        float distance = Vector3.Distance(transform.position, target.position);
 
-        //낭떨어지라면 방향 전환
-        if (rayHit.collider == null)
+        if (attackDelay == 0 && distance <= enemy.fieldOfVision)
         {
-            Turn();
+            FaceTarget();
+
+            if (distance <= enemy.atkRange)
+            {
+                AttackTarget();
+            }
+            else
+            {
+                //애니메이션이 Attack이 아닐 경우.
+                //if (!enemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
+                //{
+                MoveToTarget();
+                //}
+            }
+        }
+        else
+        {
+            enemyAnimator.SetBool("moving", false);
         }
     }
 
-    void Think()
+    void MoveToTarget()
     {
-        //다음 활동
-        nextMove = Random.Range(-1, 2);
-
-        //몬스터 애니메이션
-        anim.SetInteger("RunSpeed", nextMove);
-
-        //몬스터 이동 방향
-        if (nextMove != 0)
-        {
-            spriteRenderer.flipX = nextMove >= 1;
-        }
-
-        //재귀
-        float nextThinkTime = Random.Range(2f, 5f);
-        Invoke("Think", nextThinkTime);
+        float dir = target.position.x - transform.position.x;
+        dir = (dir < 0) ? -1 : 1;
+        transform.Translate(new Vector2(dir, 0) * enemy.moveSpeed * Time.deltaTime);
+        enemyAnimator.SetBool("moving", true);
     }
 
-    void Turn()
+    void FaceTarget()
     {
-        nextMove *= -1;
-        spriteRenderer.flipX = nextMove >= 1;
+        if (target.position.x - transform.position.x > 0) // 타겟이 오른쪽에 있을 때
+        {
+            transform.localScale = new Vector3(-1, 1, 1);
+        }
+        else // 타겟이 왼쪽에 있을 때
+        {
+            transform.localScale = new Vector3(1, 1, 1);
+        }
+    }
 
-        CancelInvoke();
-        Invoke("Think", 2);
+    void AttackTarget()
+    {
+        //target.GetComponent<Sword_Man>().nowHp -= enemy.atkDmg; //채력바
+        //enemyAnimator.SetTrigger("attack"); // 공격 애니메이션 실행
+        StartCoroutine(JumpEffect());
+        attackDelay = enemy.atkSpeed; // 딜레이 충전
+    }
+
+    IEnumerator JumpEffect() //공격 애니메이션 대신 임시로 점프 사용
+    {
+        Vector3 originPos = transform.position;
+        float jumpHeight = 1f;
+        float jumpSpeed = 5f;
+
+        float t = 0;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * jumpSpeed;
+            transform.position = Vector3.Lerp(originPos, originPos + Vector3.up * jumpHeight, t);
+            yield return null;
+        }
+
+        t = 0;
+        while (t < 1f)
+        {
+            t += Time.deltaTime * jumpSpeed;
+            transform.position = Vector3.Lerp(originPos + Vector3.up * jumpHeight, originPos, t);
+            yield return null;
+        }
     }
 }
