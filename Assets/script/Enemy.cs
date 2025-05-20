@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
-    public string enemyName;
-    public int maxHp;
-    public int nowHp;
-    public int atkDmg;
-    public float atkSpeed;
-    public float moveSpeed;
-    public float atkRange;
-    public float fieldOfVision;
+    public string enemyName;    //몬스터 이름
+    public int maxHp;           //최대 체력
+    public int nowHp;           //현재 체력
+    public int atkDmg;          //공격 데미지
+    public float atkSpeed;      //공격 속도
+    public float moveSpeed;     //이동 속도
+    public float atkRange;      //공격 범위
+    public float fieldOfVision; //몬스터 시야
 
     public Animator enemyAnimator;
 
@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     {
         if (name.Equals("Enemy1"))
         {
-            SetEnemyStatus("Enemy1", 100, 10, 1.5f, 2, 0.94f, 7f);
+            SetEnemyStatus("Enemy1", 100, 10, 1.5f, 2, 0.94f, 10f);
         }
     }
 

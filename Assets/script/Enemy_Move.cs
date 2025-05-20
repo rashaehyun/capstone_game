@@ -5,13 +5,20 @@ public class Enemy_Move : MonoBehaviour
 {
     public Transform target;
     float attackDelay;
+    float patternDelay;
+    bool isAction = false;
 
     Enemy enemy;
     Animator enemyAnimator;
+
+    enum Pattern { Move, Jump, Dash }
+    Pattern cPattern = Pattern.Move;
+
     void Start()
     {
         enemy = GetComponent<Enemy>();
         enemyAnimator = enemy.enemyAnimator;
+        StartCoroutine(PatternChanger());
     }
 
     void Update()
@@ -29,13 +36,20 @@ public class Enemy_Move : MonoBehaviour
             {
                 AttackTarget();
             }
-            else
+            else if (!isAction)
             {
-                //애니메이션이 Attack이 아닐 경우.
-                //if (!enemyAnimator.GetCurrentAnimatorStateInfo(0).IsName("Attack"))
-                //{
-                MoveToTarget();
-                //}
+                switch (cPattern)
+                {
+                    case Pattern.Move:
+                        MoveToTarget();
+                        break;
+                    case Pattern.Jump:
+                        StartCoroutine(JumpToTarget());
+                        break;
+                    case Pattern.Dash:
+                        StartCoroutine(DashToTarget());
+                        break;
+                }
             }
         }
         else
@@ -68,11 +82,11 @@ public class Enemy_Move : MonoBehaviour
     {
         //target.GetComponent<Sword_Man>().nowHp -= enemy.atkDmg; //채력바
         //enemyAnimator.SetTrigger("attack"); // 공격 애니메이션 실행
-        StartCoroutine(JumpEffect());
+        StartCoroutine(Attack());
         attackDelay = enemy.atkSpeed; // 딜레이 충전
     }
 
-    IEnumerator JumpEffect() //공격 애니메이션 대신 임시로 점프 사용
+    IEnumerator Attack() //공격 애니메이션 대신 수행할 임시 점프 함수 생성
     {
         Vector3 originPos = transform.position;
         float jumpHeight = 1f;
@@ -93,5 +107,57 @@ public class Enemy_Move : MonoBehaviour
             transform.position = Vector3.Lerp(originPos + Vector3.up * jumpHeight, originPos, t);
             yield return null;
         }
+    }
+
+
+
+    IEnumerator PatternChanger()
+    {
+        while (true)
+        {
+            yield return new WaitForSeconds(Random.Range(2f, 4f));
+
+            // 랜덤하게 행동 패턴 결정
+            int rand = Random.Range(0, 3); // 0: Walk, 1: Jump, 2: Dash
+            cPattern = (Pattern)rand;
+        }
+    }
+
+    IEnumerator JumpToTarget()
+    {
+        isAction = true;
+        Vector3 startPos = transform.position;
+        Vector3 endPos = new Vector3(target.position.x, transform.position.y, transform.position.z);
+        float jumpHeight = 2f;
+        float duration = 0.5f;
+        float t = 0;
+
+        while (t < 1f)
+        {
+            t += Time.deltaTime / duration;
+            float height = Mathf.Sin(Mathf.PI * t) * jumpHeight;
+            transform.position = Vector3.Lerp(startPos, endPos, t) + Vector3.up * height;
+            yield return null;
+        }
+
+        isAction = false;
+    }
+
+    IEnumerator DashToTarget()
+    {
+        isAction = true;
+        float dir = target.position.x - transform.position.x < 0 ? -1 : 1;
+        float dashSpeed = enemy.moveSpeed * 3;
+        float dashDuration = 0.2f;
+
+        float t = 0;
+        while (t < dashDuration)
+        {
+            transform.Translate(Vector2.right * dir * dashSpeed * Time.deltaTime);
+            t += Time.deltaTime;
+            yield return null;
+        }
+
+        isAction = false;
     }
 }
