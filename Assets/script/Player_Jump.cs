@@ -58,4 +58,9 @@ public class PlayerJump : MonoBehaviour
         }
         
     }
+
+    public bool GetIsGrounded()
+    {
+        return isGround;
+    }
 }

@@ -17,7 +17,6 @@ public class CommandInput : MonoBehaviour
 
     void Update()
     {
-        Debug.Log("🔄 Update 도는 중");
 
         if (Input.GetKeyDown(triggerKey))
         {

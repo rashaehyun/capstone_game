@@ -34,6 +34,9 @@ public class Player_Move : MonoBehaviour
 
     private void FixedUpdate()
     {
+        WallGrab wallGrab = GetComponent<WallGrab>();
+        if (wallGrab != null && wallGrab.IsGrabbingWall())
+            return;
 
         if (dash != null && dash.IsDashing || isKnockback)
             return;
