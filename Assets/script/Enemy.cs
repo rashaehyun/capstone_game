@@ -17,7 +17,7 @@ public class Enemy : MonoBehaviour
     {
         if (name.Equals("Enemy1"))
         {
-            SetEnemyStatus("Enemy1", 100, 10, 1.5f, 2, 0.94f, 10f);
+            SetEnemyStatus("Enemy1", 5, 5, 1.5f, 2, 0.94f, 10f);
         }
     }
 
@@ -31,5 +31,21 @@ public class Enemy : MonoBehaviour
         moveSpeed = _moveSpeed;
         atkRange = _atkRange;
         fieldOfVision = _fieldOfVision;
+    }
+
+    public void TakeDamage(int dmg)
+    {
+        nowHp -= dmg;
+
+        if (nowHp <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        // 애니메이션, 파티클, 점수 증가 등 추가 가능
+        Destroy(gameObject);
     }
 }
