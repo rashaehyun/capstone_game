@@ -3,103 +3,105 @@ using UnityEngine;
 public class WallGrab2 : MonoBehaviour
 {
     [Header("벽 감지")]
-    [SerializeField] private Transform wallRayOrigin;        // Ray 시작점
-    [SerializeField] private float wallCheckDistance = 0.3f; // 감지 거리
+    [SerializeField] private Transform wallRayOrigin;
+    [SerializeField] private float wallCheckDistance = 0.3f;
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private Vector2 baseRayDirection = Vector2.right; // 👉 기본 방향은 오른쪽
+    [SerializeField] private Vector2 baseRayDirection = Vector2.right;
     [SerializeField] private SpriteRenderer spriteRenderer;
 
     private Rigidbody2D body;
     private PlayerJump playerJump;
+    private Animator animator;
 
     private bool isWallGrabbing;
-    private float originalGravity;
-
     private bool prevFlipX;
-
+    private float originalGravity;
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         playerJump = GetComponent<PlayerJump>();
-        spriteRenderer = GetComponent<SpriteRenderer>(); // 또는 [SerializeField]로 수동 연결
+        spriteRenderer = GetComponent<SpriteRenderer>();
+        animator = GetComponent<Animator>();
         originalGravity = body.gravityScale;
     }
 
     private void Update()
     {
+        // 현재 상태 정보 수집
         bool isGrounded = IsGrounded();
         bool isTouchingWall = IsTouchingWall();
         float horizontalInput = Input.GetAxisRaw("Horizontal");
         float verticalVelocity = body.linearVelocity.y;
 
-        bool shouldStartGrabbing = isTouchingWall && !isGrounded && verticalVelocity < -1.0f && Mathf.Abs(horizontalInput) > 0.1f;
+        // 붙기 조건
+        bool shouldStartGrabbing =
+            isTouchingWall &&
+            !isGrounded &&
+            verticalVelocity < -1.0f &&
+            Mathf.Abs(horizontalInput) > 0.1f;
 
-        if (shouldStartGrabbing && !isWallGrabbing)
+        // ray 방향 반전 처리
+        FlipRayOriginWithSprite();
+
+        // 상태 변화 시에만 처리
+        if (shouldStartGrabbing != isWallGrabbing)
         {
-            isWallGrabbing = true;
-            body.gravityScale = 0f;
-            body.linearVelocity = Vector2.zero;
+            isWallGrabbing = shouldStartGrabbing;
+
+            body.gravityScale = isWallGrabbing ? 0f : originalGravity;
+            if (isWallGrabbing)
+                body.linearVelocity = Vector2.zero; // 중단
+            // animator 전이 트리거
+            animator.SetBool("WallGrab", isWallGrabbing);
+
+            Debug.Log(isWallGrabbing ? "🧲 Wall Grab 시작" : "⬅️ 벽에서 떨어짐");
         }
 
-        if (isWallGrabbing)
-        {
-            if (shouldStartGrabbing)
-            {
-                body.linearVelocity = Vector2.zero;
-            }
-            else
-            {
-                isWallGrabbing = false;
-                body.gravityScale = originalGravity;
-            }
-        }
-
-        if (!isWallGrabbing && body.gravityScale != originalGravity)
-        {
-            body.gravityScale = originalGravity;
-        }
-
-        bool currentFlipX = spriteRenderer.flipX;
-
-        if (currentFlipX != prevFlipX)
-        {
-            Debug.Log($"[WallGrab2] flipX changed → {currentFlipX}");
-            prevFlipX = currentFlipX;
-        }
+        // (선택) flipX 변화 감지
+        TrackFlipXChange();
     }
 
-    private bool IsGrounded()
+    private void FlipRayOriginWithSprite()
     {
-        return playerJump != null && playerJump.GetIsGrounded();
+        if (wallRayOrigin == null || spriteRenderer == null) return;
+
+        Vector3 localPos = wallRayOrigin.localPosition;
+        localPos.x = Mathf.Abs(localPos.x) * (spriteRenderer.flipX ? -1f : 1f);
+        wallRayOrigin.localPosition = localPos;
+    }
+
+    private void TrackFlipXChange()
+    {
+        bool currentFlipX = spriteRenderer.flipX;
+        if (currentFlipX != prevFlipX)
+        {
+            prevFlipX = currentFlipX;
+            //Debug.Log($"[FlipX] Changed to {currentFlipX}");
+        }
     }
 
     private bool IsTouchingWall()
     {
         if (wallRayOrigin == null || spriteRenderer == null) return false;
 
-        // 👉 flipX 기준으로 방향 반전
         float flip = spriteRenderer.flipX ? -1f : 1f;
         Vector2 direction = baseRayDirection * flip;
 
-        RaycastHit2D hit = Physics2D.Raycast(wallRayOrigin.position, direction, wallCheckDistance, wallLayer);
+        RaycastHit2D hit = Physics2D.Raycast(
+            wallRayOrigin.position,
+            direction,
+            wallCheckDistance,
+            wallLayer
+        );
 
-#if UNITY_EDITOR
-        Debug.DrawRay(wallRayOrigin.position, direction * wallCheckDistance, Color.cyan);
-#endif
-
+        //Debug.DrawRay(wallRayOrigin.position, direction * wallCheckDistance, Color.cyan);
         return hit.collider != null;
     }
 
-    private void OnDrawGizmosSelected()
+    private bool IsGrounded()
     {
-        if (wallRayOrigin != null && spriteRenderer != null)
-        {
-            float flip = spriteRenderer.flipX ? -1f : 1f;
-            Vector3 direction = baseRayDirection * flip;
-            Gizmos.color = Color.cyan;
-            Gizmos.DrawLine(wallRayOrigin.position, wallRayOrigin.position + (Vector3)(direction * wallCheckDistance));
-        }
+        return playerJump != null && playerJump.GetIsGrounded();
     }
 
     public bool IsGrabbingWall()
