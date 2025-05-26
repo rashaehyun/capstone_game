@@ -16,6 +16,7 @@ public class Bullet_Lifetime : MonoBehaviour
     {
         if (((1 << collision.gameObject.layer) & enemyLayer) != 0)
         {
+            Debug.Log("Enemy와 충돌 - Bullet 제거됨");
             Enemy enemy = collision.GetComponent<Enemy>();
             if (enemy != null)
             {

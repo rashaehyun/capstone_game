@@ -35,12 +35,19 @@ public class WallGrab2 : MonoBehaviour
         float verticalVelocity = body.linearVelocity.y;
 
         // 붙기 조건
-        bool shouldStartGrabbing =
+        /*bool shouldStartGrabbing =
             isTouchingWall &&
             !isGrounded &&
             verticalVelocity < -1.0f &&
             Mathf.Abs(horizontalInput) > 0.1f;
+        */
 
+        bool shouldStartGrabbing = ShouldStartWallGrabbing(
+            isTouchingWall,
+            isGrounded,
+            verticalVelocity,
+            horizontalInput);
+            
         // ray 방향 반전 처리
         FlipRayOriginWithSprite();
 
@@ -60,6 +67,14 @@ public class WallGrab2 : MonoBehaviour
 
         // (선택) flipX 변화 감지
         TrackFlipXChange();
+
+        if (isWallGrabbing)
+        {
+            body.linearVelocity = Vector2.zero;
+            playerJump.ResetJumpCount();  // ✅ 매번 점프 회복!
+        }
+
+
     }
 
     private void FlipRayOriginWithSprite()
@@ -107,5 +122,22 @@ public class WallGrab2 : MonoBehaviour
     public bool IsGrabbingWall()
     {
         return isWallGrabbing;
+    }
+    private bool ShouldStartWallGrabbing(bool isTouchingWall, bool isGrounded, float verticalVelocity, float horizontalInput)
+    {
+        bool shouldGrab =
+            isTouchingWall &&
+            !isGrounded &&
+            verticalVelocity < -1.0f &&
+            Mathf.Abs(horizontalInput) > 0.1f;
+
+        Debug.Log($"[WallGrab Condition] " +
+            $"touchingWall={isTouchingWall}, " +
+            $"grounded={isGrounded}, " +
+            $"velY={verticalVelocity}, " +
+            $"inputX={horizontalInput}, " +
+            $"shouldGrab={shouldGrab}");
+
+        return shouldGrab;
     }
 }

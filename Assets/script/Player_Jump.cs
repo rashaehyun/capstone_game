@@ -63,4 +63,10 @@ public class PlayerJump : MonoBehaviour
     {
         return isGround;
     }
+
+    public void ResetJumpCount()
+    {
+        jumpCount = 0;
+        isJump = false;
+    }
 }
