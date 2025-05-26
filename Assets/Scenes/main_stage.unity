@@ -8280,7 +8280,6 @@ GameObject:
   - component: {fileID: 1754410634}
   - component: {fileID: 1754410633}
   - component: {fileID: 1754410632}
-  - component: {fileID: 1754410638}
   - component: {fileID: 1754410639}
   m_Layer: 8
   m_Name: enemy
@@ -8288,7 +8287,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1754410632
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -8458,28 +8457,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1754410638
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1754410631}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4bd78839a8dbbb242a96c79a3917f70b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 1396208083}
-  moveSpeed: 2
-  fieldOfVision: 10
-  atkRange: 6
-  atkSpeed: 1.5
-  nextMove: 0
-  maxHp: 5
-  delayBeforeCharge: 2
-  patrolSpeed: 1.5
-  turnCooldown: 1
 --- !u!114 &1754410639
 MonoBehaviour:
   m_ObjectHideFlags: 0

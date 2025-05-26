@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 23bf02dea31e96d47bd0bd6f6f0a1a3b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 181335
+  packageName: Wolf Pixel Art Character
+  packageVersion: 1.0
+  assetPath: Assets/wolf_package/white/jump down.controller
+  uploadId: 396408

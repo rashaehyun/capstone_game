@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b75706e9399bc48a69e3754899baae5b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 301712
+  packageName: Inferno Wolf - Top Down Pixel Art Characters
+  packageVersion: 1.0
+  assetPath: Assets/sanctum_pixel/wolf-inferno-topdown-package/Sprite/wolf-inferno-topdown/1/attack_1.controller
+  uploadId: 706336

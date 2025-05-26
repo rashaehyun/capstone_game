@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b4a585bcd9b0da3449dcf0bb59262e82
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 181337
+  packageName: Werewolf Pixel Art Character
+  packageVersion: 1.0
+  assetPath: Assets/werewolf_package/white/walk.controller
+  uploadId: 396409
