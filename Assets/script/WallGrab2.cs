@@ -51,18 +51,21 @@ public class WallGrab2 : MonoBehaviour
         // ray 방향 반전 처리
         FlipRayOriginWithSprite();
 
-        // 상태 변화 시에만 처리
-        if (shouldStartGrabbing != isWallGrabbing)
+        // 항상 현재 상태를 animator에 반영
+        animator.SetBool("WallGrab", shouldStartGrabbing);
+
+        if (shouldStartGrabbing && !isWallGrabbing)
         {
-            isWallGrabbing = shouldStartGrabbing;
-
-            body.gravityScale = isWallGrabbing ? 0f : originalGravity;
-            if (isWallGrabbing)
-                body.linearVelocity = Vector2.zero; // 중단
-            // animator 전이 트리거
-            animator.SetBool("WallGrab", isWallGrabbing);
-
-            Debug.Log(isWallGrabbing ? "🧲 Wall Grab 시작" : "⬅️ 벽에서 떨어짐");
+            isWallGrabbing = true;
+            body.gravityScale = 0f;
+            body.linearVelocity = Vector2.zero;
+            Debug.Log("🧲 Wall Grab 시작");
+        }
+        else if (!shouldStartGrabbing && isWallGrabbing)
+        {
+            isWallGrabbing = false;
+            body.gravityScale = originalGravity;
+            Debug.Log("⬅️ 벽에서 떨어짐");
         }
 
         // (선택) flipX 변화 감지
@@ -130,13 +133,6 @@ public class WallGrab2 : MonoBehaviour
             !isGrounded &&
             verticalVelocity < -1.0f &&
             Mathf.Abs(horizontalInput) > 0.1f;
-
-        Debug.Log($"[WallGrab Condition] " +
-            $"touchingWall={isTouchingWall}, " +
-            $"grounded={isGrounded}, " +
-            $"velY={verticalVelocity}, " +
-            $"inputX={horizontalInput}, " +
-            $"shouldGrab={shouldGrab}");
 
         return shouldGrab;
     }
