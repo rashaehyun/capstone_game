@@ -68,7 +68,7 @@ public class Enemy_Move : MonoBehaviour
 
     void FaceTarget()
     {
-        if (target.position.x - transform.position.x > 0) // 타겟이 오른쪽에 있을 때
+        if (target.position.x - transform.position.x < 0) // 타겟이 오른쪽에 있을 때
         {
             transform.localScale = new Vector3(-1, 1, 1);
         }
@@ -81,35 +81,9 @@ public class Enemy_Move : MonoBehaviour
     void AttackTarget()
     {
         //target.GetComponent<Sword_Man>().nowHp -= enemy.atkDmg; //채력바
-        //enemyAnimator.SetTrigger("attack"); // 공격 애니메이션 실행
-        StartCoroutine(Attack());
+        enemyAnimator.SetTrigger("attack"); // 공격 애니메이션 실행
         attackDelay = enemy.atkSpeed; // 딜레이 충전
     }
-
-    IEnumerator Attack() //공격 애니메이션 대신 수행할 임시 점프 함수 생성
-    {
-        Vector3 originPos = transform.position;
-        float jumpHeight = 1f;
-        float jumpSpeed = 5f;
-
-        float t = 0;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * jumpSpeed;
-            transform.position = Vector3.Lerp(originPos, originPos + Vector3.up * jumpHeight, t);
-            yield return null;
-        }
-
-        t = 0;
-        while (t < 1f)
-        {
-            t += Time.deltaTime * jumpSpeed;
-            transform.position = Vector3.Lerp(originPos + Vector3.up * jumpHeight, originPos, t);
-            yield return null;
-        }
-    }
-
-
 
     IEnumerator PatternChanger()
     {

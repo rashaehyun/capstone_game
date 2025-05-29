@@ -11,16 +11,6 @@ public class Enemy : MonoBehaviour
     public float atkRange;      //공격 범위
     public float fieldOfVision; //몬스터 시야
 
-    public Animator enemyAnimator;
-
-    void Start()
-    {
-        if (name.Equals("Enemy1"))
-        {
-            SetEnemyStatus("Enemy1", 5, 5, 1.5f, 2, 0.94f, 10f);
-        }
-    }
-
     void SetEnemyStatus(string _enemyName, int _maxHp, int _atkDmg, float _atkSpeed, float _moveSpeed, float _atkRange, float _fieldOfVision)
     {
         enemyName = _enemyName;
@@ -31,6 +21,18 @@ public class Enemy : MonoBehaviour
         moveSpeed = _moveSpeed;
         atkRange = _atkRange;
         fieldOfVision = _fieldOfVision;
+    }
+
+    public Animator enemyAnimator;
+
+    void Start()
+    {
+        if (name.Equals("Boss"))
+        {
+            SetEnemyStatus("Boss", 5, 5, 1.5f, 2, 2.3f, 20f);
+        }
+        
+        SetAttackSpeed(atkSpeed);
     }
 
     public void TakeDamage(int dmg)
@@ -45,7 +47,15 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
-        // 애니메이션, 파티클, 점수 증가 등 추가 가능
-        Destroy(gameObject);
+        enemyAnimator.SetTrigger("die");
+        GetComponent<Enemy>().enabled = false;    // 추적 비활성화
+        GetComponent<Collider2D>().enabled = false; // 충돌체 비활성화
+        Destroy(GetComponent<Rigidbody2D>());       // 중력 비활성화
+        Destroy(gameObject, 3);
+    }
+
+    void SetAttackSpeed(float speed)
+    {
+        enemyAnimator.SetFloat("attackSpeed", speed);
     }
 }
