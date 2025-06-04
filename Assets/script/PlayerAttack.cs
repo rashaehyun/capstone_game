@@ -53,5 +53,13 @@ public class PlayerAttack : MonoBehaviour
         GameObject bullet = Instantiate(projectilePrefab, spawnPos, Quaternion.identity);
         Rigidbody2D rb = bullet.GetComponent<Rigidbody2D>();
         rb.linearVelocity = direction * projectileSpeed;
+
+        // 공격 사운드 재생
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlayAttackSound();
+        }
     }
+
+
 }

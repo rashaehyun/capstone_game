@@ -17,12 +17,15 @@ public class Player_Move : MonoBehaviour
     [SerializeField] private float maxFallSpeed = -30f;           // 낙하 최대 속도
 
     private Rigidbody2D body;
-    private SpriteRenderer spriteRenderer; // ��������Ʈ ������ �߰�
+    private SpriteRenderer spriteRenderer; 
     private Animator anim;
     private PlayerDash dash;
     public float InputX => inputValue;
 
     private bool isKnockback = false;
+
+    private float footstepTimer;
+    [SerializeField] private float footstepInterval = 0.4f; // 발소리 간격
 
     private void Awake()
     {
@@ -62,15 +65,31 @@ public class Player_Move : MonoBehaviour
         // ĳ���� ���� ��ȯ
         if (inputValue > 0)
         { 
-            spriteRenderer.flipX = false; // ������ �̵� �� ���� ����
+            spriteRenderer.flipX = false; 
         }
         else if (inputValue < 0)
         { 
-            spriteRenderer.flipX = true;  // ���� �̵� �� �¿� ����
+            spriteRenderer.flipX = true; 
         }
 
         bool isRunning = Mathf.Abs(inputValue) > 0.01f;
         anim.SetBool("isRun", isRunning);
+
+        // ✅ 발소리 재생 조건
+        if (isRunning && body.linearVelocity.y == 0) // 지면에 있을 때만
+        {
+            footstepTimer -= Time.fixedDeltaTime;
+            if (footstepTimer <= 0f)
+            {
+                SFXManager.Instance.PlaySound(SFXManager.Instance.runSound);
+                footstepTimer = footstepInterval;
+            }
+        }
+        else
+        {
+            footstepTimer = 0f; // 멈추면 타이머 초기화
+        }
+
     }
 
     private void OnMove(InputValue value)

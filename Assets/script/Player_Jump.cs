@@ -56,7 +56,13 @@ public class PlayerJump : MonoBehaviour
 
             isJump = true;
         }
-        
+
+        // 점프 사운드 재생
+        if (SFXManager.Instance != null)
+        {
+            SFXManager.Instance.PlayJumpSound();
+        }
+
     }
 
     public bool GetIsGrounded()
