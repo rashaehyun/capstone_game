@@ -29,7 +29,7 @@ public class Enemy : MonoBehaviour
     {
         if (name.Equals("Boss"))
         {
-            SetEnemyStatus("Boss", 5, 5, 1.5f, 2, 2.3f, 20f);
+            SetEnemyStatus("Boss", 5, 5, 1.5f, 4, 3.0f, 20f);
         }
         
         SetAttackSpeed(atkSpeed);

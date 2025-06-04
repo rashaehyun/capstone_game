@@ -80,9 +80,11 @@ public class Enemy_Move : MonoBehaviour
 
     void AttackTarget()
     {
-        //target.GetComponent<Sword_Man>().nowHp -= enemy.atkDmg; //채력바
         enemyAnimator.SetTrigger("attack"); // 공격 애니메이션 실행
         attackDelay = enemy.atkSpeed; // 딜레이 충전
+
+        float dir = target.position.x - transform.position.x < 0 ? -1 : 1;
+        transform.Translate(new Vector2(dir * 1.0f, 0));
     }
 
     IEnumerator PatternChanger()
@@ -99,6 +101,7 @@ public class Enemy_Move : MonoBehaviour
 
     IEnumerator JumpToTarget()
     {
+        enemyAnimator.SetBool("jumping", true);
         isAction = true;
         Vector3 startPos = transform.position;
         Vector3 endPos = new Vector3(target.position.x, transform.position.y, transform.position.z);
@@ -115,6 +118,8 @@ public class Enemy_Move : MonoBehaviour
         }
 
         isAction = false;
+        enemyAnimator.SetBool("jumping", false);
+        cPattern = Pattern.Move;  // 점프 후 일반 이동으로 전환
     }
 
     IEnumerator DashToTarget()
