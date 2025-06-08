@@ -46,7 +46,7 @@ public class Scroll_bg : MonoBehaviour
     {
         // 목표 위치 계산 (X, Y)
         float targetX = cameraTransform.position.x * parallaxMultiplier + offsetX;
-        float targetY = cameraTransform.position.y * parallaxMultiplier + offsetY;
+        // float targetY = cameraTransform.position.y * parallaxMultiplier + offsetY; // Y축 따라가지 않음
 
         // 무한 스크롤 (X축만 적용)
         float deltaX = targetX - transform.position.x;
@@ -55,9 +55,10 @@ public class Scroll_bg : MonoBehaviour
             targetX += deltaX % textureUnitSizeX;
         }
 
-        // 부드럽게 따라가기 (X, Y 각각 Lerp)
+        // 부드럽게 따라가기 (X만 적용, Y는 현재 위치 유지)
         float newX = Mathf.Lerp(transform.position.x, targetX, followSpeed * Time.deltaTime);
-        float newY = Mathf.Lerp(transform.position.y, targetY, followSpeed * Time.deltaTime);
+        // float newY = Mathf.Lerp(transform.position.y, targetY, followSpeed * Time.deltaTime); // Y축 따라가지 않음
+        float newY = transform.position.y;
 
         transform.position = new Vector3(newX, newY, transform.position.z);
 

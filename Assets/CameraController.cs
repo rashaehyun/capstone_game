@@ -44,10 +44,10 @@ public class CameraController : MonoBehaviour
             Vector3 smoothPosition = Vector3.SmoothDamp(transform.position, targetPosition, ref velocity, smoothTime);
 
             // x, y 축만 clamp
-            float clampedX = Mathf.Clamp(smoothPosition.x, minPosition.x, maxPosition.x);
-            float clampedY = Mathf.Clamp(smoothPosition.y, minPosition.y, maxPosition.y);
+            //float clampedX = Mathf.Clamp(smoothPosition.x, minPosition.x, maxPosition.x);
+            //float clampedY = Mathf.Clamp(smoothPosition.y, minPosition.y, maxPosition.y);
 
-            transform.position = new Vector3(clampedX, clampedY, smoothPosition.z); // z는 offset에서 유지
+           // transform.position = new Vector3(clampedX, clampedY, smoothPosition.z); // z는 offset에서 유지
         }
     }
 }
