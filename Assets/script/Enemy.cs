@@ -34,7 +34,7 @@ public class Enemy : MonoBehaviour
         }
         else if (name.StartsWith("Enemy"))
         {
-            SetEnemyStatus("Enemy", 5, 5, 1.5f, 4, 2.0f, 20f);
+            SetEnemyStatus("Enemy", 5, 5, 1.5f, 4, 2.0f, 10.0f);
         }
 
         SetAttackSpeed(atkSpeed);
