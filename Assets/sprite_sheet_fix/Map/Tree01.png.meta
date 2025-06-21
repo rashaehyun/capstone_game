@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 2a0fc7d4b4206224aaa5498509a1c09c
+guid: 2a332ab06285e544bbc83ea4cd7ec103
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -143135276527152720
-    second: Hanok01_0
+      213: -2866514639951743944
+    second: Tree01_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -100,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: Hanok01_0
+      name: Tree01_0
       rect:
         serializedVersion: 2
-        x: 23
-        y: 159
-        width: 978
-        height: 674
+        x: 79
+        y: 57
+        width: 794
+        height: 936
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -115,8 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: 0b195cf693b730ef0800000000000000
-      internalID: -143135276527152720
+      spriteID: 83438365f181838d0800000000000000
+      internalID: -2866514639951743944
       vertices: []
       indices: 
       edges: []
@@ -134,8 +134,7 @@ TextureImporter:
     secondaryTextures: []
     spriteCustomMetadata:
       entries: []
-    nameFileIdTable:
-      Hanok01_0: -143135276527152720
+    nameFileIdTable: {}
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
