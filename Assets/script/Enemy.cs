@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     public float moveSpeed;     //이동 속도
     public float atkRange;      //공격 범위
     public float fieldOfVision; //몬스터 시야
+    public bool isDead = false; //몬스터 사망 여부
 
     void SetEnemyStatus(string _enemyName, int _maxHp, int _atkDmg, float _atkSpeed, float _moveSpeed, float _atkRange, float _fieldOfVision)
     {
@@ -31,7 +32,11 @@ public class Enemy : MonoBehaviour
         {
             SetEnemyStatus("Boss", 5, 5, 1.5f, 4, 3.0f, 20f);
         }
-        
+        else if (name.StartsWith("Enemy"))
+        {
+            SetEnemyStatus("Enemy", 5, 5, 1.5f, 4, 2.0f, 20f);
+        }
+
         SetAttackSpeed(atkSpeed);
     }
 
@@ -47,10 +52,12 @@ public class Enemy : MonoBehaviour
 
     void Die()
     {
+        isDead = true;
         enemyAnimator.SetTrigger("die");
-        GetComponent<Enemy>().enabled = false;    // 추적 비활성화
-        GetComponent<Collider2D>().enabled = false; // 충돌체 비활성화
-        Destroy(GetComponent<Rigidbody2D>());       // 중력 비활성화
+
+        GetComponent<Collider2D>().enabled = false;
+        Destroy(GetComponent<Rigidbody2D>());
+
         Destroy(gameObject, 3);
     }
 
