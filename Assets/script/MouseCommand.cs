@@ -3,48 +3,57 @@ using UnityEngine;
 
 public class CommandInput : MonoBehaviour
 {
-    public GameObject guideShapeUI;       // 화면에 띄울 도형 UI (ex. Sprite 또는 LineRenderer)
-    public LineRenderer inputLine;        // 마우스로 그리는 궤적 시각화
+    public GameObject guideShapeUI;       // 화면에 띄울 도형 UI
+    public LineRenderer inputLine;        // 궤적 시각화
     public KeyCode triggerKey = KeyCode.F;
+    public Transform target;              // ✅ 궤적을 그릴 기준 오브젝트
 
     private bool isCommandMode = false;
     private List<Vector3> drawnPoints = new List<Vector3>();
 
     void Start()
     {
-        guideShapeUI.SetActive(false); // 시작 시 꺼줌
+        guideShapeUI.SetActive(false);
     }
 
     void Update()
     {
-
         if (Input.GetKeyDown(triggerKey))
         {
-            EnterCommandMode();   // guideShapeUI.SetActive(true)
+            EnterCommandMode();
         }
 
         if (isCommandMode)
         {
             TrackMouseDrawing();
 
+            // ✅ 도형이 target을 따라가게 설정
+            if (target != null && guideShapeUI != null)
+            {
+                Vector3 targetPos = target.position + new Vector3(0f, 1f, 0f); // 머리 위
+                guideShapeUI.transform.position = targetPos;
+            }
+
             if (Input.GetKeyUp(triggerKey))
             {
-                ExitCommandMode();  // guideShapeUI.SetActive(false)
+                ExitCommandMode();
             }
         }
     }
 
-
     void EnterCommandMode()
     {
         isCommandMode = true;
-        Debug.Log("✅ F 키 입력됨: EnterCommandMode 실행"); 
+        Debug.Log("✅ F 키 입력됨: EnterCommandMode 실행");
         guideShapeUI.SetActive(true);
         inputLine.positionCount = 0;
         drawnPoints.Clear();
+
         Time.timeScale = 0.2f;
         Time.fixedDeltaTime = 0.02f * Time.timeScale;
+
         Debug.Log("guideShapeUI is " + (guideShapeUI == null ? "NULL ❌" : "CONNECTED ✅"));
+        Debug.Log("target is " + (target == null ? "NULL ❌" : "CONNECTED ✅"));
     }
 
     void ExitCommandMode()
@@ -54,7 +63,6 @@ public class CommandInput : MonoBehaviour
         Time.timeScale = 1f;
         Time.fixedDeltaTime = 0.02f;
 
-        // 궤적 인식 시도
         RecognizePattern(drawnPoints);
     }
 
@@ -62,9 +70,20 @@ public class CommandInput : MonoBehaviour
     {
         if (Input.GetMouseButton(0))
         {
-            Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-            mousePos.z = 0f;
-            drawnPoints.Add(mousePos);
+            Vector3 point;
+
+            // ✅ target이 지정되어 있으면 target 위치를 사용
+            if (target != null)
+            {
+                point = target.position;
+            }
+            else
+            {
+                point = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            }
+
+            point.z = 0f;
+            drawnPoints.Add(point);
 
             inputLine.positionCount = drawnPoints.Count;
             inputLine.SetPositions(drawnPoints.ToArray());
@@ -73,8 +92,6 @@ public class CommandInput : MonoBehaviour
 
     void RecognizePattern(List<Vector3> input)
     {
-        // 👉 여기서 궤적을 미리 저장된 도형과 비교 (샘플 예시)
-        // 유사하면 스킬 발동
         Debug.Log("Recognizing pattern...");
     }
 }
